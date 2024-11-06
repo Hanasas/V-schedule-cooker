@@ -1,3 +1,5 @@
+*COOMING SOON*
+
 *祝 nijisanji EN 的 Victoria Brightshield 前程似锦，武运昌隆。*  
 *我始终相信vtuber与观众的相遇是一种一期一会的奇迹，如果本项目能为不同国家的vtuber与海外粉丝的相遇变得方便一点点，不胜荣幸。*
 
