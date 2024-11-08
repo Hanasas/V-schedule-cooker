@@ -21,7 +21,7 @@ def rect_form(rectangle_points):
 
 # 计算矩形中心点的函数
 def rectangle_center(rect):
-    x1, y1, x2, y2 = rect_form(rect)
+    x1, y1, x2, y2 = rect
     return [(x1 + x2) / 2, (y1 + y2) / 2]
 
 # 计算每个类的覆盖矩形的列表
@@ -47,32 +47,30 @@ def cover_rects(rectangles):
     clusters = fcluster(Z, max_d, criterion='distance')
 
     # 打印聚类结果
-    for i, cluster in enumerate(clusters):
-        print(f"Rectangle {i + 1} is in cluster {cluster}")
+    # for i, cluster in enumerate(clusters):
+    #     print(f"Rectangle {i + 1} is in cluster {cluster}")
 
     # 可以将聚类结果与原矩形列表关联起来
     clustered_rectangles = {cluster: [rectangles[i] for i, c in enumerate(clusters) if c == cluster] for cluster in set(clusters)}
-    # print(clustered_rectangles)
+    print(clustered_rectangles)
 
-    group_rects = []
-    for i in clustered_rectangles:
-        items = clustered_rectangles[i]
+    # 计算每个簇的覆盖矩形
+    cluster_bounds = {}
+    for cluster, items in clustered_rectangles.items():
         x1 = float('inf')
         y1 = float('inf')
         x2 = 0
         y2 = 0
         for item in items:
-            for x,y in item:
-                x1 = min(x1,x)
-                y1 = min(y1,y)
-                x2 = max(x2,x)
-                y2 = max(y2,y)
-        group_rects.append([x1,y1,x2,y2])
+            x1 = min(x1, item[0], item[2])
+            y1 = min(y1, item[1], item[3])
+            x2 = max(x2, item[0], item[2])
+            y2 = max(y2, item[1], item[3])
+        cluster_bounds[cluster] = [x1, y1, x2, y2]
 
-    group_rects_formed = []
-    for item in group_rects:
-        x1,y1,x2,y2 = item
-        rec_formed = ([x1,y1],[x2,y1],[x2,y2],[x1,y2])
-        group_rects_formed.append(rec_formed)
-    print(group_rects_formed)
-    return group_rects_formed
+    # 创建包含二元组的列表
+    result = []
+    for i, cluster in enumerate(clusters):
+        result.append((i, cluster_bounds[cluster]))
+
+    return result

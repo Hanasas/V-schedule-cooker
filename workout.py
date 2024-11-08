@@ -5,6 +5,9 @@ from PIL import Image, ImageTk
 import cv2
 import easyocr
 import numpy as np
+from collections import Counter
+from datetime import datetime
+import pytz
 
 import timeJudge
 import sorted_queue
@@ -55,7 +58,7 @@ class Item:
         self.position = Position(position)
         self.text = text
         # self.confidence = confidence
-        self.type = timeJudge.is_time_string(text)
+        self.type = timeJudge.is_time_string(text) # TEXT_IN = 1 DATE_IN = 2 WEEKDAY_IN = 3 TIME_IN = 4 ZONE_IN = 5 
     
     def print_detail(self) -> None:
         print(self.position,end=',')
@@ -68,6 +71,9 @@ class Item:
     
     def set_rect_two_points(self,x1,y1,x2,y2):
         self.position.set_rect_two_points(x1,y1,x2,y2)
+
+    def __lt__(self,other):
+        return self.position < other.position
 
 # -----------------------------------------------------------------
 
@@ -94,12 +100,12 @@ def handle_image(image_name) -> list[Item]:
     print("识别完成")
     # for result in results:
     #     result.printDetail()
-    for item in results:
-        cv2.polylines(img,item.position.get_np_points(),isClosed=True,color=(0,0,255),thickness=2)
-        cv2.putText(img,str(item.type),item.position.left_down,cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,255),2)
-    output_image_path = "result_" + image_name
-    cv2.imwrite(output_image_path, img)
-    print("绘制边界框并保存图片完成")
+    # for item in results:
+    #     cv2.polylines(img,item.position.get_np_points(),isClosed=True,color=(0,0,255),thickness=2)
+    #     cv2.putText(img,str(item.type),item.position.left_down,cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,255),2)
+    # output_image_path = "result_" + image_name
+    # cv2.imwrite(output_image_path, img)
+    # print("绘制边界框并保存图片完成")
     return results
 
 """
@@ -127,9 +133,66 @@ def handle_time(items:list[Item]) -> list[Item]:
         elif item.type == 2 or item.type == 3: # date weekday
             pass
         else:
-            time_queue.enqueue(item.position) # time zone
+            time_queue.enqueue(item) # time zone
     return results
+
+def group_items(items):
+    rects = [item.get_rect_two_points() for item in items]
+    return group.cover_rects(rects)
 
 def get_time_rect():
     global time_queue
+    items = time_queue.get_list()
+    time_grouped_list = group.cover_rects([item.get_rect_two_points() for item in items])
+    print(time_grouped_list)
+    return time_grouped_list
+
+def get_cover_color(image):
+    # 将图像转换为二维数组，每个元素是一个像素的颜色
+    pixels = image.reshape(-1, image.shape[-1])
     
+    # 将每个像素的颜色转换为元组，以便计数
+    pixels = [tuple(pixel) for pixel in pixels]
+    
+    # 统计每种颜色出现的次数
+    color_counts = Counter(pixels)
+    
+    # 找到出现次数最多的颜色
+    most_common_color = color_counts.most_common(1)[0][0]
+    
+    return tuple(map(int, most_common_color))
+    
+
+def get_cluster_times(items, clusters):
+    cluster_times = {}
+    # 遍历每个簇
+    for item_index, cluster_rect in clusters:
+        item = items[item_index]
+        cluster_id = tuple(cluster_rect)  # 使用簇的矩形作为键
+
+        if cluster_id not in cluster_times:
+            cluster_times[cluster_id] = []
+
+        cluster_times[cluster_id].append(item)
+
+    # 处理每个簇中的Item
+    for cluster_id, cluster_items in cluster_times.items():
+        # 按y坐标排序
+        cluster_items.sort(key=lambda item: item.position.left_up[1])
+
+        # 找到y坐标相近的两个Item
+        for i in range(len(cluster_items) - 1):
+            item1 = cluster_items[i]
+            item2 = cluster_items[i + 1]
+
+            y_diff = abs(item1.position.left_up[1] - item2.position.left_up[1])
+
+            # 假设y坐标差小于一定阈值时，认为它们是一组
+            if y_diff < 10:  # 你可以根据实际情况调整这个阈值
+                if (item1.type == 4 and item2.type == 5):
+                    cluster_times[cluster_id] = f"{item1.text} {item2.text}"
+                elif (item1.type == 5 and item2.type == 4):
+                    cluster_times[cluster_id] = f"{item2.text} {item1.text}"
+                break
+
+    return cluster_times

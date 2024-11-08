@@ -136,7 +136,7 @@ def find_font_path(font_name):
     #
     # 返回:
     # str: 字体文件的路径，如果未找到则返回None
-    print(f"Searching for font: {font_name}")
+    # print(f"Searching for font: {font_name}")
 
     # 获取系统中的所有字体
     font_list = fm.findSystemFonts(fontpaths=None, fontext='ttf')
@@ -156,8 +156,8 @@ def cover_text(image, pos, text, font_path="arial.ttf"):
 
     # 使用K-means聚类获得背景颜色和文字颜色
     background_color, text_color = get_colors_kmeans(text_box)
-    print(f"Background color: {background_color}")
-    print(f"Text color: {text_color}")
+    # print(f"Background color: {background_color}")
+    # print(f"Text color: {text_color}")
 
     # 从config.txt中获得字体，并且从系统中读取字体
     font_path = get_font_from_config()

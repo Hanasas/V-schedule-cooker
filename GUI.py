@@ -22,17 +22,22 @@ class GUI(tk.Tk):
         self.title("选择图片")
         self.geometry("1080x720")
         
+        self.button_frame = tk.Frame(self)
+        self.button_frame.pack()
+
         # 创建按钮，用于打开文件对话框选择图片
-        self.select_button = tk.Button(self, text="选择图片", command=self.open_image)
-        self.select_button.pack(pady=20)
+        self.select_button = tk.Button(self.button_frame, text="选择图片", command=self.open_image)
+        self.select_button.pack(side='left',padx=10,pady=20)
+
+        # 创建按钮，用于清空界面
+        self.clear_button = tk.Button(self.button_frame, text="确定", command=self.go_next)
+        self.clear_button.pack(side='left',padx=10,pady=20)
 
         # 用于显示选中的图片
         self.image_label = tk.Label(self)
         self.image_label.pack(pady=20)
 
-        # 创建按钮，用于清空界面
-        self.clear_button = tk.Button(self, text="确定", command=self.go_next)
-        self.clear_button.pack(pady=20)
+        
 
     def open_image(self):
         global ori_image_path

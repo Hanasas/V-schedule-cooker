@@ -29,6 +29,9 @@ class SortedQueue:
         if self.is_empty() == False:
             self.queue.clear()
     
+    def get_list(self):
+        return self.queue
+
 if __name__ == '__main__':
     q = SortedQueue()
     q.enqueue(3)

@@ -7,6 +7,7 @@ from tkinter import filedialog, messagebox
 
 import workout as wk
 import cover_text as ct
+import time_convert as tc
 
 class cooker(tk.Frame):
     def __init__(self, master = None, path = None):
@@ -16,12 +17,42 @@ class cooker(tk.Frame):
         self.max_width = master.winfo_width() - 100
         self.max_height = master.winfo_height() - 100
 
+        self.font = ct.get_font_from_config()
+
         ori_rects = wk.handle_image(path)
         self.rects = wk.handle_time(ori_rects)
+        time_group = wk.get_time_rect()
+        cluster_times = wk.get_cluster_times(wk.time_queue.get_list(), time_group)
+        
+        # for cluster_id, time in cluster_times.items():
+        #     print(f"Cluster {cluster_id} time: {time}")
 
         self.image = cv2.imread(path)
 
-        self.font = ct.get_font_from_config()
+        # 遍历 time_group 并为时间矩形添加覆盖颜色
+        for i,rect in time_group:
+            x1, y1, x2, y2 = map(int, rect)
+            time_box = self.image[y1:y2, x1:x2]
+            cover_color = wk.get_cover_color(time_box)
+            cv2.rectangle(self.image, (x1 - 8, y1 - 8), (x2 + 8, y2 + 8), cover_color, thickness=cv2.FILLED)
+        
+        # 为每个时间矩形写上转化时区后的时间
+        for cluster_id, time in cluster_times.items():
+            rect = cluster_id
+            target_timezone = tc.read_target_timezone('config.txt')
+            time_str = time
+            converted_time = tc.convert_to_target_timezone(time_str, target_timezone)
+            
+            x1, y1, x2, y2 = map(int, rect)
+            # 计算时间的尺寸
+            text_size = cv2.getTextSize(converted_time + ' ' + target_timezone, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)[0]
+            # 计算文本的起始位置，使其在矩形区域的正中间
+            text_x = int(x1 + (x2 - x1 - text_size[0]) // 2)
+            text_y = int(y1 + (y2 - y1 + text_size[1]) // 2)
+            # 在图像上绘制文本
+            cv2.putText(self.image, converted_time + ' ' + target_timezone, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), thickness=2)
+
+
 
         self.image_index = 0
 
@@ -120,6 +151,9 @@ class cooker(tk.Frame):
             pil_image.save(file_path)
             messagebox.showinfo("保存成功", "图像已成功保存！")
             self.master.quit()
+    
+
+    
 
 if __name__ == "__main__":
     app = cooker()
