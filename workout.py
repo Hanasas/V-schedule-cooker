@@ -7,7 +7,6 @@ import easyocr
 import numpy as np
 from collections import Counter
 from datetime import datetime
-import pytz
 
 import timeJudge
 import sorted_queue

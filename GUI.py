@@ -19,7 +19,7 @@ class GUI(tk.Tk):
 
     def init_ui(self):
         # 界面的内容是选择图片
-        self.title("选择图片")
+        self.title("select image")
         self.geometry("1080x720")
         
         self.button_frame = tk.Frame(self)
