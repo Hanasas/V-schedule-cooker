@@ -26,21 +26,21 @@ Pillow = 11.0.0
 # 使用手册 User Manual
 首次打开程序时，请在下拉选框选择您的字体和时区  
 
-![font time zone selector](image.png)
+![font time zone selector](readme_images\image.png)
 
 如果您的时区不在列表中，您可以先随意选择，稍后在程序生成的config.txt中手动修改。注意，您修改的时区可能仍不在程序能换算的列表内，这种情况请联系我
-![config.txt](image-1.png)
+![config.txt](readme_images\image-1.png)
 
 点击确认，字体和时区选择框自动消失，您的信息已经记录到config.txt中了，此后这个窗口不会再出现，如果您需要修改信息，请在文件资源管理器中删除config.txt，重启本程序即可。
 
 在select image窗口，先点击选择图片，在出现的窗口中选择您要翻译的日程表原图片，点击打开，select image窗口会出现图片的预览，确认无误后点击确定
-![select image](image-2.png)
+![select image](readme_images\image-2.png)
 稍等片刻，此时程序正在运行基于AI的文字识别功能，本程序不使用GPU，因此加载较慢，并非卡死，请耐心等待  
 加载完成，窗口标题改为V schedule cooker，可以开始编辑。此时您表中的时间内容应该已经被替换为您选择的时区，如果没有成功替换，或者时差有误（部分时区缩写存在歧义），请联系我修改程序
-![cooker](image-3.png)
+![cooker](readme_images\image-3.png)
 **上一个**、**下一个**按钮会改变当前编辑的文字块，在文本框内输入翻译内容，点击**确定**，当前编辑的文字块会被修改成文本框内的内容  
 如果您的窗口中没有出现文本框，按钮或者出现不全，这是由于您选择的图片长宽比不是我预设的16：9，别担心，这不影响使用，请下拉窗口的下边缘找到全部组件，笔者会尽快修改显示问题
-![alt text](image-5.png)
+![alt text](readme_images\image-5.png)
 您可以多次修改同一条文字，但是不推荐这样做，这样可能导致字号异常，不同字块重叠和旧内容覆盖错误等问题  
 某些不需要修改的内容也会被识别选中，跳过即可  
 在编辑的任何时刻，都可以点击保存并关闭，保存编辑后的图片并关闭本程序
