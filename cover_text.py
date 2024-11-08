@@ -171,28 +171,3 @@ def cover_text(image, pos, text, font_path="arial.ttf"):
     return image, new_pos
     
 
-# 示例使用
-if __name__ == "__main__":
-    # 打开一个图像文件
-    image = Image.open("02.png")
-
-    # 定义文本框的位置 (left, upper, right, lower)
-    pos = (283, 110, 424, 138)
-
-    # 从原图中提取文本框
-    text_box = get_text_box(image, pos)
-    text_box.show()
-
-    # 使用K-means聚类获得背景颜色和文字颜色
-    background_color, text_color = get_colors_kmeans(text_box)
-    print(f"Background color: {background_color}")
-    print(f"Text color: {text_color}")
-
-    # 从config.txt中获得字体，并且从系统中读取字体
-    font_path = get_font_from_config()
-
-    # 在文本框内写上新的字
-    draw_text_in_box(image, pos, "新文字", background_color, text_color, font_path)
-
-    # 显示新图像   
-    image.show()

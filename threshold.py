@@ -26,10 +26,3 @@ def get_colors_threshold(image, pos):
     
     return tuple(background_color_rgb), tuple(text_color_rgb)
 
-# 示例用法
-image = Image.open('02.png')
-pos = (283, 110, 424, 138)  # 矩形区域 (left, upper, right, lower)
-# pos = (1036,216,1104,242)
-background_color, text_color = get_colors_threshold(image, pos)
-print(f"Background color: {background_color}")
-print(f"Text color: {text_color}")
