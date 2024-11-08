@@ -21,6 +21,9 @@ class cooker(tk.Frame):
 
         ori_rects = wk.handle_image(path)
         self.rects = wk.handle_time(ori_rects)
+        print("rects:")
+        for rect in self.rects:
+            rect.print_detail()
         time_group = wk.get_time_rect()
         cluster_times = wk.get_cluster_times(wk.time_queue.get_list(), time_group)
         

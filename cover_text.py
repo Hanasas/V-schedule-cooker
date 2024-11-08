@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from sklearn.cluster import KMeans
 import matplotlib.font_manager as fm
+import threshold
 
 # 从原图的image对象中取出文本框
 def get_text_box(image, pos):
@@ -79,8 +80,9 @@ def draw_text_in_box(image, pos, text, background_color, text_color, font_path):
     # pos (tuple): 文本框的位置 (left, upper, right, lower)
     # text (str): 要绘制的文本
     # background_color (tuple): 背景颜色 (R, G, B)
-    # text_color (tuple): 文字颜色 (R, G, B)
+    # text_color (tuple): 文字颜色 (B, G, B)
     # font_path (str): 字体文件的路径
+
     text_box = get_text_box(image, pos)
     text_box_height = text_box.size[1]
     font_size = calculate_font_size(text, text_box_height, font_path)
@@ -155,9 +157,10 @@ def cover_text(image, pos, text, font_path="arial.ttf"):
     text_box = get_text_box(image, pos)
 
     # 使用K-means聚类获得背景颜色和文字颜色
-    background_color, text_color = get_colors_kmeans(text_box)
-    # print(f"Background color: {background_color}")
-    # print(f"Text color: {text_color}")
+    # background_color, text_color = get_colors_kmeans(text_box)
+
+    # 使用阈值分割获得背景颜色和文字颜色
+    background_color, text_color = threshold.get_colors_threshold(image, pos)
 
     # 从config.txt中获得字体，并且从系统中读取字体
     font_path = get_font_from_config()

@@ -98,14 +98,6 @@ def handle_image(image_name) -> list[Item]:
     img = cv2.imread(image_name,cv2.IMREAD_GRAYSCALE)
     results = [Item(*item) for item in reader.readtext(img)]
     print("识别完成")
-    # for result in results:
-    #     result.printDetail()
-    # for item in results:
-    #     cv2.polylines(img,item.position.get_np_points(),isClosed=True,color=(0,0,255),thickness=2)
-    #     cv2.putText(img,str(item.type),item.position.left_down,cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,255),2)
-    # output_image_path = "result_" + image_name
-    # cv2.imwrite(output_image_path, img)
-    # print("绘制边界框并保存图片完成")
     return results
 
 """
