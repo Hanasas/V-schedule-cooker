@@ -57,5 +57,5 @@ Victoria的神圣圆桌(Victoria Brightshield's unofficial subtitle group on bil
 
 # 联系我 Contact Me
 
-如果您在使用本项目时遇到任何问题，或有任何意见和建议，请随时通过gouchengouceq@163.com联系我，或许您也可以在某些vtuber字幕组找到我或者我的联系方式。
+如果您在使用本项目时遇到任何问题，或有任何意见和建议，请随时通过gouchengouceq@163.com联系我，或许您也可以在某些vtuber字幕组找到我或者我的联系方式。  
 If you encounter any problems when using this project, or have any comments or suggestions, please feel free to contact me at gouchengouceq@163.com. Maybe you can also find me or my contact information in some vtuber subtitle groups.
