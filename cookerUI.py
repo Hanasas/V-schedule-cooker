@@ -20,7 +20,7 @@ class cooker(tk.Frame):
         self.font = ct.get_font_from_config()
 
         ori_rects = wk.handle_image(path)
-        self.rects = wk.handle_time(ori_rects)
+        self.rects = wk.merge_adjacent_items(wk.handle_time(ori_rects))
         print("rects:")
         for rect in self.rects:
             rect.print_detail()

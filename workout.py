@@ -56,7 +56,7 @@ class Item:
     def __init__(self,position,text,confidence) -> None:
         self.position = Position(position)
         self.text = text
-        # self.confidence = confidence
+        self.confidence = confidence
         self.type = timeJudge.is_time_string(text) # TEXT_IN = 1 DATE_IN = 2 WEEKDAY_IN = 3 TIME_IN = 4 ZONE_IN = 5 
     
     def print_detail(self) -> None:
@@ -92,8 +92,6 @@ time_queue = sorted_queue.SortedQueue()
 """
 def handle_image(image_name) -> list[Item]:
     reader = easyocr.Reader(['en'], gpu=True, model_storage_directory='./EasyOCRModel')
-    text_json_list = []
-    precision_json_list = []
     img = cv2.imread(image_name,cv2.IMREAD_GRAYSCALE)
     results = [Item(*item) for item in reader.readtext(img)]
     print("识别完成")
@@ -126,6 +124,47 @@ def handle_time(items:list[Item]) -> list[Item]:
         else:
             time_queue.enqueue(item) # time zone
     return results
+
+def merge_adjacent_items(items: list[Item], distance_threshold: int = 20, y_threshold: int = 10) -> list[Item]:
+    merged_items = []
+    current_text = ""
+    current_position = None
+
+    for i, item in enumerate(items):
+        text = item.text
+        position = item.position
+
+        if current_text == "":
+            current_text = text
+            current_position = position
+        else:
+            # 检查当前文本块和上一个文本块是否相邻
+            prev_position = current_position
+            prev_x2 = max(prev_position.left_up[0], prev_position.right_up[0], prev_position.right_down[0], prev_position.left_down[0])
+            curr_x1 = min(position.left_up[0], position.right_up[0], position.right_down[0], position.left_down[0])
+            
+            # 检查 Y 坐标差异
+            prev_y1 = min(prev_position.left_up[1], prev_position.right_up[1], prev_position.right_down[1], prev_position.left_down[1])
+            prev_y2 = max(prev_position.left_up[1], prev_position.right_up[1], prev_position.right_down[1], prev_position.left_down[1])
+            curr_y1 = min(position.left_up[1], position.right_up[1], position.right_down[1], position.left_down[1])
+            curr_y2 = max(position.left_up[1], position.right_up[1], position.right_down[1], position.left_down[1])
+
+            if curr_x1 - prev_x2 < distance_threshold and abs(curr_y1 - prev_y1) < y_threshold and abs(curr_y2 - prev_y2) < y_threshold:
+                # 如果两个文本块之间的距离小于阈值，且 Y 坐标差异小于阈值，则认为它们是相邻的
+                current_text += " " + text
+                current_position.right_up = position.right_up
+                current_position.right_down = position.right_down
+            else:
+                l = [current_position.left_up, current_position.right_up, current_position.right_down, current_position.left_down]
+                merged_items.append(Item(l, current_text, item.confidence))
+                current_text = text
+                current_position = position
+
+    if current_text != "":
+        l = [current_position.left_up, current_position.right_up, current_position.right_down, current_position.left_down]
+        merged_items.append(Item(l, current_text, items[-1].confidence))
+
+    return merged_items
 
 def group_items(items):
     rects = [item.get_rect_two_points() for item in items]
