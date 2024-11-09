@@ -80,7 +80,7 @@ def draw_text_in_box(image, pos, text, background_color, text_color, font_path):
     # pos (tuple): 文本框的位置 (left, upper, right, lower)
     # text (str): 要绘制的文本
     # background_color (tuple): 背景颜色 (R, G, B)
-    # text_color (tuple): 文字颜色 (B, G, B)
+    # text_color (tuple): 文字颜色 (R, G, B)
     # font_path (str): 字体文件的路径
 
     text_box = get_text_box(image, pos)
